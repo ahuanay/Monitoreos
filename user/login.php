@@ -1,9 +1,61 @@
 <?php
-	session_start();
+	require_once 'php/fbConfig.php';
+	require_once 'php/reg-usuarioFB.php';
 		
 	if(isset($_SESSION['usuario'])) {
 		header('Location: index.php');
 	}
+	// if(isset($accessToken)){
+    //     if(isset($_SESSION['facebook_access_token'])){
+    //         $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
+    //     }else{
+    //         // Token de acceso de corta duración en sesión
+    //         $_SESSION['facebook_access_token'] = (string) $accessToken;
+            
+    //         // Controlador de cliente OAuth 2.0 ayuda a administrar tokens de acceso
+    //         $oAuth2Client = $fb->getOAuth2Client();
+            
+    //         // Intercambia una ficha de acceso de corta duración para una persona de larga vida
+    //         $longLivedAccessToken = $oAuth2Client->getLongLivedAccessToken($_SESSION['facebook_access_token']);
+    //         $_SESSION['facebook_access_token'] = (string) $longLivedAccessToken;
+            
+    //         // Establecer token de acceso predeterminado para ser utilizado en el script
+    //         $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
+    //     }
+        
+    //     // Redirigir el usuario de nuevo a la misma página si url tiene "code" parámetro en la cadena de consulta
+    //     if(isset($_GET['code'])){
+	// 		header('Location: index.php');
+    //     }
+        
+    //     // Obtener información sobre el perfil de usuario facebook
+    //     try {
+    //         $profileRequest = $fb->get('/me?fields=name,first_name,last_name,email,picture');
+    //         $fbUserProfile = $profileRequest->getGraphNode()->asArray();
+    //     } catch(FacebookResponseException $e) {
+    //         echo 'Graph returned an error: ' . $e->getMessage();
+    //         session_destroy();
+    //         // Redirigir usuario a la página de inicio de sesión de la aplicación
+    //         header("Location: ./");
+    //         exit;
+    //     } catch(FacebookSDKException $e) {
+    //         echo 'Facebook SDK returned an error: ' . $e->getMessage();
+    //         exit;
+	// 	}
+
+	// 	$user = new User();
+
+	// 	$arreglo[] = array(
+	// 		'Nombre' => $fbUserProfile['first_name'],
+    //         'Apellido ' => $fbUserProfile['last_name'],
+    //         'Email' => $fbUserProfile['email'],
+	// 		'UrlAvatar' => $fbUserProfile['picture']['url']
+	// 	);
+	// 	$userData = $user->checkUser($arreglo);
+
+    //     $_SESSION['usuario'] = $userData;
+    // }else{ $loginURL = $helper->getLoginUrl($redirectURL, $fbPermissions); }
+
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +80,51 @@
 </head>
 
 <body id="page-top">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    
+    <script> 
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : '605732463249377',
+                cookie     : true,
+                xfbml      : true,
+                version    : 'v3.3'
+            });              
+        };
+
+        function loginFB() {
+            FB.login(function(response) {
+                FB.api('/me', { fields: 'id,first_name,last_name,email,picture'}, function(response) {
+                    // console.log(response);
+                    var data = {
+                        Email: response.email,
+                        Nombre: response.last_name + " " + response.first_name,
+                        Avatar: response.picture.data.url
+                    };
+                    console.log(data);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "loginFB.php",
+                        data: data,
+                        success: function (response) {
+                            location.href = 'home.php';
+                        }
+                    });
+                });
+            }, {scope: 'public_profile,email'});
+            
+        }
+
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/es_ES/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+    </script>
 	<div id="wrapper">
 		<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 			<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -85,6 +182,10 @@
 												</div>
 											</div>
 											<button class="btn btn-primary btn-user btn-block" id="login">Iniciar Sesión</button>
+											<!-- <a href="<?php echo htmlspecialchars($loginURL); ?>" class="btn btn-primary btn-user btn-block"><i class="fab fa-facebook-f"></i> Iniciar sesión con Facebook</a> -->
+											<div class="mt-2 text-center">
+												<div class="fb-login-button" data-width="" onlogin="loginFB();" data-size="large" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="true"></div>
+											</div>
 										</div>
 										<hr>
 										<div class="text-center">

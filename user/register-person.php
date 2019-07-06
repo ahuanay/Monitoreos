@@ -4,11 +4,6 @@
     if(isset($_SESSION['usuario'])) {
         header('Location: index.php');
     }
-    
-	require 'php/get.php';
-	$get = new get();
-	
-    $result = $get->getSP("get_Departamentos()");
 ?>
 
 <!DOCTYPE html>
@@ -87,16 +82,6 @@
                                                         <input type="text" class="form-control" id="Apellido" name="Apellido" placeholder="Apellido">
                                                     </div>
                                                 </div>
-                                                <div class="form-group row">
-                                                    <div class="col-sm-6">
-                                                        <label for="DNI">DNI</label>
-                                                        <input type="text" class="form-control" id="DNI" name="DNI" placeholder="DNI">
-                                                    </div>
-                                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                                        <label for="Telefono">Teléfono</label>
-                                                        <input type="text" class="form-control" id="Telefono" name="Telefono" placeholder="Teléfono">
-                                                    </div>
-                                                </div>
                                                 <div class="form-group">
                                                     <label for="Email">Email</label>
                                                     <input type="email" class="form-control" id="Email" name="Email" placeholder="Email">
@@ -113,31 +98,6 @@
                                                     <div class="col-sm-6">
                                                         <label for="RepeatPassword">Repetir Contraseña</label>
                                                         <input type="password" class="form-control" id="RepeatPassword" name="RepeatPassword" placeholder="Repetir Contraseña">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-sm-4">
-                                                        <label for="Departamento">Departamento</label>
-                                                        <select class="form-control" id="Departamento" name="Departamento">
-                                                            <option value="" disabled selected>Seleccione</option>
-                                                            <?php while ($row = $result->fetch_assoc()) { ?>
-                                                                <option value="<?php echo $row['IdDepartamento']; ?>">
-                                                                    <?php echo $row['Departamento']; ?>
-                                                                </option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <label for="Provincia">Provincia</label>
-                                                        <select class="form-control" id="Provincia" name="Provincia">
-                                                            <option value="" disabled selected>Seleccione</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <label for="Distrito">Distrito</label>
-                                                        <select class="form-control" id="Distrito" name="Distrito">
-                                                            <option value="" disabled selected>Seleccione</option>
-                                                        </select>
                                                     </div>
                                                 </div>
                                                 <button class="btn btn-primary btn-user btn-block" id="Registrar-person" name="Registrar-person" type="submit">Registrar Cuenta</button>

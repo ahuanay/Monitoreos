@@ -1,5 +1,6 @@
 <?php
-    session_start();
+    require_once 'php/fbConfig.php';
+	$logoutURL = $helper->getLogoutUrl($accessToken, $redirectURLBase.'php/cerrar-sesion.php');
 
     if(isset($_POST['IdProyecto'])){
         $_SESSION['IdProyecto'] = $_POST['IdProyecto'];
@@ -52,6 +53,11 @@
 					<a class="nav-link" href="mis-proyectos.php"><i class="fas fa-tags"></i><span>Mis Proyecto</span></a>
 				</li>
 			<?php } ?>
+            <?php if(isset($_SESSION['usuario']) &&  $_SESSION['usuario'][0]['TipoUsuario'] == 'PERSONAL') { ?>
+				<li class="nav-item">
+					<a class="nav-link" href="segui-muni.php"><i class="fas fa-landmark"></i><span>Siguiendo Municipalidades</span></a>
+				</li>
+			<?php } ?>
 			<li class="nav-item active">
 				<a class="nav-link" href="proyectos.php"><i class="fas fa-tags"></i><span>Proyectos</span></a>
 			</li>
@@ -77,13 +83,21 @@
 							<li class="nav-item dropdown no-arrow">
 								<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small"><b><?php echo $ArrayUsuario[0]['Nombre']; ?></b></span>
-									<img class="img-profile rounded-circle" src="data:image/jpeg; base64, <?php echo base64_encode($ArrayUsuario[0]['Avatar']); ?>">
+									<?php if(isset($ArrayUsuario[0]['UrlAvatar'])) { ?>
+										<img class="img-profile rounded-circle" src="<?php echo $ArrayUsuario[0]['UrlAvatar']; ?>">
+									<?php } else { ?>
+										<img class="img-profile rounded-circle" src="data:image/jpeg; base64, <?php echo base64_encode($ArrayUsuario[0]['Avatar']); ?>">
+									<?php } ?>
 								</a>
 								<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 									<a class="dropdown-item" href="perfil.php"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>Perfil</a>
 									<a class="dropdown-item" href="404.php"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>Configuración</a>
 									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" href="#" id="Cerrar"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php if(isset($ArrayUsuario[0]['UrlAvatar'])) { ?>
+										<a class="dropdown-item" href="<?php echo $logoutURL; ?>"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php } else { ?>
+										<a class="dropdown-item" href="#" id="Cerrar"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php } ?>
 								</div>
 							</li>
 						<?php } else { ?>
@@ -117,7 +131,7 @@
                                                 <div class="card m-2">
                                                     <div class="card-body">
                                                         <div class="row">
-                                                            <div class="col-6">
+                                                            <div class="col-lg-6 col-md-12">
                                                                 <div class="form-group row">
                                                                     <label for="" class="col-3 col-form-label">Ubicación</label>
                                                                     <div class="col-9">
@@ -143,7 +157,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-lg-6 col-md-12">
                                                                 <div class="form-group row">
                                                                     <label for="" class="col-3 col-form-label">Distrito</label>
                                                                     <div class="col-9">
@@ -201,7 +215,7 @@
                                                 <div class="card m-2">
                                                     <div class="card-body">
                                                         <div class="row">
-                                                            <div class="col-6">
+                                                            <div class="col-lg-6 col-md-12">
                                                                 <div class="form-group row">
                                                                     <label for="" class="col-3 col-form-label">Monto de Inversión</label>
                                                                     <div class="col-9">
@@ -209,7 +223,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-lg-6 col-md-12">
                                                                 <div class="form-group row">
                                                                     <label for="" class="col-3 col-form-label">Función</label>
                                                                     <div class="col-9">
@@ -269,10 +283,18 @@
                                                 <div class="card m-2">
                                                     <div class="card-body">
                                                         <div class="row">
-                                                            <div class="col-1">
-                                                                <img class="img-profile rounded-circle" style="width: 100%" src="data:image/jpeg; base64, <?php echo base64_encode($ArrayUsuario[0]['Avatar']); ?>" <?php echo isset($_SESSION['usuario']) ? '': 'hidden'; ?>>
+                                                            <div class="col-lg-1 col-2">
+                                                            <?php
+                                                                if(isset($ArrayUsuario[0]['Avatar'])) {
+                                                                    $imagen = "data:image/jpeg; base64, ".base64_encode($ArrayUsuario[0]['Avatar']). "";
+                                                                }
+                                                                if(isset($ArrayUsuario[0]['UrlAvatar'])) {
+                                                                    $imagen = $ArrayUsuario[0]['UrlAvatar'];
+                                                                }
+                                                            ?>
+                                                                <img class="img-profile rounded-circle" style="width: 100%" src="<?php echo $imagen; ?>" <?php echo isset($_SESSION['usuario']) ? '': 'hidden'; ?>>
                                                             </div>
-                                                            <div class="col-11">
+                                                            <div class="col-lg-11 col-10">
                                                                 <textarea class="form-control" id="CampComentario" placeholder="Comentario"></textarea>
                                                                 <button class="btn btn-primary mt-2" <?php echo isset($_SESSION['usuario']) ? '': 'disabled'; ?> id="Comentar">Comentar</button>
                                                             </div>
@@ -292,10 +314,10 @@
                                                         ?>
                                                         <div class="card-body mt-2">
                                                             <div class="row">
-                                                                <div class="col-1">
+                                                                <div class="col-lg-1 col-2">
                                                                     <img class="img-profile rounded-circle" style="width: 100%" src="data:image/jpeg; base64, <?php echo base64_encode($rowC['Avatar']); ?>">
                                                                 </div>
-                                                                <div class="col-11 comen">
+                                                                <div class="col-lg-11 col-10 comen">
                                                                     <b><?php echo $Nombre; ?></b> <textarea class="form-control-plaintext contComen" readonly><?php echo $rowC['Comentario']; ?></textarea>
                                                                     <div class="mt-2">
                                                                         <a href="" class="habRes">Responder</a>
@@ -325,10 +347,10 @@
                                                                             }
                                                                     ?>
                                                                         <div class="row mt-2">
-                                                                            <div class="col-1">
-                                                                                <img class="img-profile rounded-circle" style="width: 80%" src="data:image/jpeg; base64, <?php echo base64_encode($rowR['Avatar']); ?>">
+                                                                            <div class="col-lg-1 col-2">
+                                                                                <img class="img-profile rounded-circle" style="width: 100%" src="data:image/jpeg; base64, <?php echo base64_encode($rowR['Avatar']); ?>">
                                                                             </div>
-                                                                            <div class="col-11 resp">
+                                                                            <div class="col-lg-11 col-10 resp">
                                                                                 <b><?php echo $NombreR; ?></b> <textarea class="form-control-plaintext contResp" readonly><?php echo $rowR['Respuesta']; ?></textarea>
                                                                                 <div class="mt-2">
                                                                                     <?php if(isset($_SESSION['usuario'])) {

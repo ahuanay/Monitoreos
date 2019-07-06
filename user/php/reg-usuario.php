@@ -46,17 +46,12 @@
     if(isset($_POST['Registrar-person'])) {
         $Nombre = $_POST['Nombre'];
         $Apellido = $_POST['Apellido'];
-        $DNI = $_POST['DNI'];
-        $Telefono = $_POST['Telefono'];
         $Email = $_POST['Email'];
         $Avatar = $_FILES['Avatar']['tmp_name'];
         $bytesAvatar = $cmd->real_escape_string(file_get_contents($Avatar));
         $Password = password_hash($_POST['Password'], PASSWORD_DEFAULT);
-        $Departamento = $_POST['Departamento'];
-        $Provincia = $_POST['Provincia'];
-        $Distrito = $_POST['Distrito'];
-        
-        $result = $cmd->query("CALL set_Usuario_Personal('".$Email."', '".$Password."', '".$bytesAvatar."', '".$DNI."', '".$Apellido."', '".$Nombre."', '".$Telefono."', '".$Departamento."', '".$Provincia."', '".$Distrito."')");
+
+        $result = $cmd->query("CALL set_Usuario_Personal('".$Email."', '".$Password."', '".$bytesAvatar."', '".$Apellido."', '".$Nombre."')");
         $cmd->close();
 
         if($result)

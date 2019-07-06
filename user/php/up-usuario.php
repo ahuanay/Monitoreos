@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,11 +18,10 @@
     $cmd = $con->getConnection();
 
     if(isset($_POST['ActualizarAvatar'])) {
-        $IdUsuario = $_POST['IdUsuario'];
         $Avatar = $_FILES['Avatar']['tmp_name'];
         $bytesAvatar = $cmd->real_escape_string(file_get_contents($Avatar));
         
-        $result = $cmd->query("CALL up_Usuario_Avatar('".$IdUsuario."', '".$bytesAvatar."')");
+        $result = $cmd->query("CALL up_Usuario_Avatar('".$_SESSION['usuario'][0]['IdUsuario']."', '".$bytesAvatar."')");
         $cmd->close();
 
         if($result)
@@ -31,13 +31,10 @@
     }
 
     if(isset($_POST['ActualizarDatos'])) {
-        $IdUsuario = $_POST['IdUsuario'];
         $Nombre = $_POST['Nombre'];
         $Apellido = $_POST['Apellido'];
-        $Telefono = $_POST['Telefono'];
-        $Email = $_POST['Email'];
         
-        $result = $cmd->query("CALL up_Usuario_Datos('".$IdUsuario."', '".$Email."', '".$Apellido."', '".$Nombre."', '".$Telefono."')");
+        $result = $cmd->query("CALL up_Usuario_Datos('".$_SESSION['usuario'][0]['IdUsuario']."', '".$Apellido."', '".$Nombre."')");
         $cmd->close();
 
         if($result)

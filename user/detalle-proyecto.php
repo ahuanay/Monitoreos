@@ -1,5 +1,6 @@
 <?php
-    session_start();
+    require_once 'php/fbConfig.php';
+	$logoutURL = $helper->getLogoutUrl($accessToken, $redirectURLBase.'php/cerrar-sesion.php');
 
     if(isset($_POST['IdProyecto'])){
         $_SESSION['IdProyecto'] = $_POST['IdProyecto'];
@@ -53,6 +54,11 @@
 					<a class="nav-link" href="mis-proyectos.php"><i class="fas fa-tags"></i><span>Mis Proyecto</span></a>
 				</li>
 			<?php } ?>
+            <?php if(isset($_SESSION['usuario']) &&  $_SESSION['usuario'][0]['TipoUsuario'] == 'PERSONAL') { ?>
+				<li class="nav-item">
+					<a class="nav-link" href="segui-muni.php"><i class="fas fa-landmark"></i><span>Siguiendo Municipalidades</span></a>
+				</li>
+			<?php } ?>
 			<li class="nav-item">
 				<a class="nav-link" href="proyectos.php"><i class="fas fa-tags"></i><span>Proyectos</span></a>
 			</li>
@@ -78,13 +84,21 @@
 							<li class="nav-item dropdown no-arrow">
 								<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small"><b><?php echo $ArrayUsuario[0]['Nombre']; ?></b></span>
-									<img class="img-profile rounded-circle" src="data:image/jpeg; base64, <?php echo base64_encode($ArrayUsuario[0]['Avatar']); ?>">
+									<?php if(isset($ArrayUsuario[0]['UrlAvatar'])) { ?>
+										<img class="img-profile rounded-circle" src="<?php echo $ArrayUsuario[0]['UrlAvatar']; ?>">
+									<?php } else { ?>
+										<img class="img-profile rounded-circle" src="data:image/jpeg; base64, <?php echo base64_encode($ArrayUsuario[0]['Avatar']); ?>">
+									<?php } ?>
 								</a>
 								<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 									<a class="dropdown-item" href="perfil.php"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>Perfil</a>
 									<a class="dropdown-item" href="404.php"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>Configuración</a>
 									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" href="#" id="Cerrar"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php if(isset($ArrayUsuario[0]['UrlAvatar'])) { ?>
+										<a class="dropdown-item" href="<?php echo $logoutURL; ?>"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php } else { ?>
+										<a class="dropdown-item" href="#" id="Cerrar"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php } ?>
 								</div>
 							</li>
 						<?php } else { ?>
@@ -104,15 +118,15 @@
                                         <div class="card m-2">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-12">
+                                                    <div class="col-lg-12">
                                                         <div class="form-group row">
-                                                            <label for="Proyecto" class="col-2 col-form-label">Proyecto</label>
-                                                            <div class="col-10">
+                                                            <label for="Proyecto" class="col-lg-2 col-md-4 col-form-label">Proyecto</label>
+                                                            <div class="col-lg-10 col-md-8">
                                                                 <input type="text" class="form-control" id="NombreObra" name="NombreObra" value="<?php echo $row['NombreObra']; ?>">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-lg-6 col-md-12">
                                                         <div class="form-group row">
                                                             <label for="CodigoSNIP" class="col-4 col-form-label">Código SNIP</label>
                                                             <div class="col-8">
@@ -150,7 +164,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-lg-6 col-md-12">
                                                         <div class="form-group row">
                                                             <label for="Estado" class="col-4 col-form-label">Estado</label>
                                                             <div class="col-8">
@@ -221,20 +235,20 @@
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Area Ejecutora</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-lg-2 col-md-4 col-form-label">Area Ejecutora</label>
+                                                            <div class="col-lg-10 col-md-8">
                                                                 <input type="text" class="form-control" id="AreaEjecutora" name="AreaEjecutora" value="<?php echo $row['AreaEjecutora']; ?>">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Residente</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-lg-2 col-md-4 col-form-label">Residente</label>
+                                                            <div class="col-lg-10 col-md-8">
                                                                 <input type="text" class="form-control" id="Residente" name="Residente" value="<?php echo $row['Residente']; ?>">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Supervisor</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-lg-2 col-md-4 col-form-label">Supervisor</label>
+                                                            <div class="col-lg-10 col-md-8">
                                                                 <input type="text" class="form-control" id="Supervisor" name="Supervisor" value="<?php echo $row['Supervisor']; ?>">
                                                             </div>
                                                         </div>
@@ -245,26 +259,26 @@
                                         <div class="card m-2">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-6">
+                                                    <div class="col-lg-6 col-md-12">
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Monto de Inversión (S/.)</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-4 col-form-label">Monto de Inversión (S/.)</label>
+                                                            <div class="col-8">
                                                                 <input type="text" class="form-control" id="MontoInversion" name="MontoInversion" value="<?php echo $row['MontoInversion']; ?>">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-lg-6 col-md-12">
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Función</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-4 col-form-label">Función</label>
+                                                            <div class="col-8">
                                                                 <input type="text" class="form-control" id="Funcion" name="Funcion" value="<?php echo $row['Funcion']; ?>">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-lg-6 col-md-12">
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Avance Financiero (S/.)</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-4 col-form-label">Avance Financiero (S/.)</label>
+                                                            <div class="col-8">
                                                                 <input type="text" class="form-control" id="AvanceFinanciero" name="AvanceFinanciero" value="<?php echo $row['AvanceFinanciero']; ?>">
                                                             </div>
                                                         </div>
@@ -278,18 +292,18 @@
                                         <div class="card m-2">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-6">
+                                                    <div class="col-lg-6 col-md-12">
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Imagen</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-4 col-form-label">Imagen</label>
+                                                            <div class="col-8">
                                                                 <input type="file" class="form-control" id="Imagen" name="Imagen" >
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-lg-6 col-md-12">
                                                         <div class="form-group row">
-                                                            <label for="" class="col-3 col-form-label">Descripción</label>
-                                                            <div class="col-9">
+                                                            <label for="" class="col-4 col-form-label">Descripción</label>
+                                                            <div class="col-8">
                                                                 <input type="text" class="form-control" id="Descripcion" name="Descripcion" placeholder="Descripción">
                                                             </div>
                                                         </div>

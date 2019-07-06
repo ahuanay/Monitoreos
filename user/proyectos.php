@@ -1,5 +1,6 @@
 <?php
-	session_start();
+	require_once 'php/fbConfig.php';
+	$logoutURL = $helper->getLogoutUrl($accessToken, $redirectURLBase.'php/cerrar-sesion.php');
 
 	require 'php/get.php';
 	$get = new get();
@@ -51,6 +52,11 @@
 					<a class="nav-link" href="mis-proyectos.php"><i class="fas fa-tags"></i><span>Mis Proyecto</span></a>
 				</li>
 			<?php } ?>
+			<?php if(isset($_SESSION['usuario']) &&  $_SESSION['usuario'][0]['TipoUsuario'] == 'PERSONAL') { ?>
+				<li class="nav-item">
+					<a class="nav-link" href="segui-muni.php"><i class="fas fa-landmark"></i><span>Siguiendo Municipalidades</span></a>
+				</li>
+			<?php } ?>
 			<li class="nav-item active">
 				<a class="nav-link" href="proyectos.php"><i class="fas fa-tags"></i><span>Proyectos</span></a>
 			</li>
@@ -76,13 +82,21 @@
 							<li class="nav-item dropdown no-arrow">
 								<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									<span class="mr-2 d-none d-lg-inline text-gray-600 small"><b><?php echo $ArrayUsuario[0]['Nombre']; ?></b></span>
-									<img class="img-profile rounded-circle" src="data:image/jpeg; base64, <?php echo base64_encode($ArrayUsuario[0]['Avatar']); ?>">
+									<?php if(isset($ArrayUsuario[0]['UrlAvatar'])) { ?>
+										<img class="img-profile rounded-circle" src="<?php echo $ArrayUsuario[0]['UrlAvatar']; ?>">
+									<?php } else { ?>
+										<img class="img-profile rounded-circle" src="data:image/jpeg; base64, <?php echo base64_encode($ArrayUsuario[0]['Avatar']); ?>">
+									<?php } ?>
 								</a>
 								<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 									<a class="dropdown-item" href="perfil.php"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>Perfil</a>
 									<a class="dropdown-item" href="404.php"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>Configuración</a>
 									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" href="#" id="Cerrar"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php if(isset($ArrayUsuario[0]['UrlAvatar'])) { ?>
+										<a class="dropdown-item" href="<?php echo $logoutURL; ?>"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php } else { ?>
+										<a class="dropdown-item" href="#" id="Cerrar"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Cerrar Sesión</a>
+									<?php } ?>
 								</div>
 							</li>
 						<?php } else { ?>
@@ -100,11 +114,11 @@
 								<div class="card-body">
 									<div class="mt-2 mb-2">
 										<div class="form-row mt-2 mb-2">
-											<div class="col form-group">
+											<div class="col-lg-3 col-md-6 form-group">
 												<label for="Proyecto">Nombre del Proyecto</label>
 												<input type="text" class="form-control" id="Proyecto" name="Proyecto" placeholder="Nombre del Proyecto">
 											</div>
-											<div class="col form-group">
+											<div class="col-lg-3 col-md-6 form-group">
 												<label for="Estado">Estado</label>
 												<select class="form-control" id="Estado" name="Estado">
 													<option value="" selected>Seleccione</option>
@@ -115,7 +129,7 @@
 													<?php } ?>
 												</select>
 											</div>
-											<div class="col form-group">
+											<div class="col-lg-3 col-md-6 form-group">
 												<label for="Modalidad">Modalidad</label>
 												<select class="form-control" id="Modalidad" name="Modalidad">
 													<option value="" selected>Seleccione</option>
@@ -126,7 +140,7 @@
 													<?php } ?>
 												</select>
 											</div>
-											<div class="col form-group">
+											<div class="col-lg-3 col-md-6 form-group">
 												<label for="Periodo">Periodo</label>
 												<select class="form-control" id="Periodo" name="Periodo">
 													<option value="" selected>Seleccione</option>
@@ -139,7 +153,7 @@
 											</div>
 										</div>
 										<div class="form-row mt-2 mb-2">
-											<div class="col form-group">
+											<div class="col-lg-4 col-md-6 form-group">
 												<label for="Departamento">Departamento</label>
 												<select class="form-control" id="Departamento" name="Departamento">
 													<option value="" selected>Seleccione</option>
@@ -150,13 +164,13 @@
 													<?php } ?>
 												</select>
 											</div>
-											<div class="col form-group">
+											<div class="col-lg-4 col-md-6 form-group">
 												<label for="Provincia">Provincia</label>
 												<select class="form-control" id="Provincia" name="Provincia">
 													<option value="" selected>Seleccione</option>
 												</select>
 											</div>
-											<div class="col form-group">
+											<div class="col-lg-4 col-md-6 form-group">
 												<label for="Distrito">Distrito</label>
 												<select class="form-control" id="Distrito" name="Distrito">
 													<option value="" selected>Seleccione</option>
